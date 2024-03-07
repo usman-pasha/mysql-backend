@@ -1,0 +1,39 @@
+version: '3.1'
+services:
+  api:
+    image: apisql:v1
+    container_name: apisql
+    restart: always
+    ports:
+      - 8051:8051
+    environment:
+      MYSQL_ROOT_PASSWORD: jupiterplanet12
+      MYSQL_DATABASE: docker  
+    volumes:
+      - ./:/usr/src/app
+    networks:
+      - api-network
+
+  db:   
+    image: mysql:8.2.0
+    container_name: mysql_instance
+    ports:
+      - 3307:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: jupiterplanet12
+      MYSQL_DATABASE: docker
+    volumes:
+      - db:/var/lib/mysql
+    networks:
+      - api-network  
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10  
+
+networks:
+  api-network:
+    driver: bridge  
+
+volumes:
+  db:
